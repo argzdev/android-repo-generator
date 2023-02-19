@@ -2,7 +2,7 @@ name: Create Repositories for Firebase Android SDK Issues
 
 on:
   schedule:
-    - cron: '*/3 * * * *' # Trigger every 30 minutes
+    - cron: '*/30 * * * *' # Trigger every 30 minutes
 
 jobs:
   create-repos:
