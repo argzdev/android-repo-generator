@@ -21,23 +21,29 @@ jobs:
           repo-name: firebase-android-sdk
           labels: android-sdk
           since: ${{ github.event.scheduled_time }}
-
-      - name: Create Empty Repository for Each Issue
-        id: create-repos
+      
+      - name: Set up Git
         run: |
-          for issue in ${{ steps.get-issues.outputs.issues }}; do
-            title=$(echo "$issue" | jq -r .title | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
-            body=$(echo "$issue" | jq -r .body)
-            repo_name="${title}-$(date +%F)"
-            repo_description="Repository created for issue $issue"
-            repo_url="https://github.com/${{ github.repository_owner }}/${repo_name}.git"
-            if curl --head --silent --fail $repo_url 2>&1 | grep "HTTP/.* 200" >/dev/null; then
-              echo "Repository $repo_name already exists. Skipping..."
-            else
-              curl -u ${{ secrets.MY_USERNAME }}:${{ secrets.MY_TOKEN }} \
-                -X POST \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/user/repos" \
-                -d "{\"name\":\"${repo_name}\",\"description\":\"${repo_description}\"}"
-            fi
-          done
+          git config --global user.email ${{ secrets.MY_EMAIL }}
+          git config --global user.name ${{ secrets.MY_NAME }}
+          
+      - name: Create repositories for Firebase Android issues
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.MY_TOKEN }}
+          script: |
+            const octokit = new github.GitHub(context.token);
+            const date = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().substr(0, 10);
+            const issues = await octokit.issues.listForRepo({
+              owner: 'firebase',
+              repo: 'firebase-android-sdk',
+              state: 'open',
+              since: date
+            });
+            for (const issue of issues.data) {
+              const repoName = issue.title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+              await octokit.repos.createForAuthenticatedUser({
+                name: repoName,
+                private: true
+              });
+            }
