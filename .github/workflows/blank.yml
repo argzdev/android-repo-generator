@@ -2,7 +2,7 @@ name: Create Repositories for Firebase Android SDK Issues
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Trigger at midnight every day
+    - cron: '*/30 * * * *' # Trigger every 30 minutes
 
 jobs:
   create-repos:
@@ -30,9 +30,14 @@ jobs:
             body=$(echo "$issue" | jq -r .body)
             repo_name="${title}-$(date +%F)"
             repo_description="Repository created for issue $issue"
-            curl -u ${{ secrets.GITHUB_USERNAME }}:${{ secrets.GITHUB_TOKEN }} \
-              -X POST \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/user/repos" \
-              -d "{\"name\":\"${repo_name}\",\"description\":\"${repo_description}\"}"
+            repo_url="https://github.com/${{ github.repository_owner }}/${repo_name}.git"
+            if curl --head --silent --fail $repo_url 2>&1 | grep "HTTP/.* 200" >/dev/null; then
+              echo "Repository $repo_name already exists. Skipping..."
+            else
+              curl -u ${{ secrets.GITHUB_USERNAME }}:${{ secrets.GITHUB_TOKEN }} \
+                -X POST \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/user/repos" \
+                -d "{\"name\":\"${repo_name}\",\"description\":\"${repo_description}\"}"
+            fi
           done
