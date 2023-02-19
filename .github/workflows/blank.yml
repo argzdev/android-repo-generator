@@ -15,7 +15,7 @@ jobs:
         id: get-issues
         uses: tiangolo/github-issues@v2.5
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.MY_TOKEN }}
           state: open
           repo-owner: firebase
           repo-name: firebase-android-sdk
@@ -34,7 +34,7 @@ jobs:
             if curl --head --silent --fail $repo_url 2>&1 | grep "HTTP/.* 200" >/dev/null; then
               echo "Repository $repo_name already exists. Skipping..."
             else
-              curl -u ${{ secrets.GITHUB_USERNAME }}:${{ secrets.GITHUB_TOKEN }} \
+              curl -u ${{ secrets.MY_USERNAME }}:${{ secrets.MY_TOKEN }} \
                 -X POST \
                 -H "Accept: application/vnd.github.v3+json" \
                 "https://api.github.com/user/repos" \
