@@ -2,7 +2,7 @@ name: Create Repositories for Firebase Android SDK Issues
 
 on:
   schedule:
-    - cron: "*/3 * * * *"
+    - cron: "*/1 * * * *"
 
 jobs:
   create-repos:
@@ -10,17 +10,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      
-      - name: Get Firebase Android SDK Issues
-        id: get-issues
-        uses: tiangolo/github-issues@v2.5
-        with:
-          repo-token: ${{ secrets.MY_TOKEN }}
-          state: open
-          repo-owner: firebase
-          repo-name: firebase-android-sdk
-          labels: android-sdk
-          since: ${{ github.event.scheduled_time }}
       
       - name: Set up Git
         run: |
