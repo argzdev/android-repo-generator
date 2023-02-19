@@ -1,0 +1,38 @@
+name: Create Repositories for Firebase Android SDK Issues
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Trigger at midnight every day
+
+jobs:
+  create-repos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      
+      - name: Get Firebase Android SDK Issues
+        id: get-issues
+        uses: tiangolo/github-issues@v2.5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          state: open
+          repo-owner: firebase
+          repo-name: firebase-android-sdk
+          labels: android-sdk
+          since: ${{ github.event.scheduled_time }}
+
+      - name: Create Empty Repository for Each Issue
+        id: create-repos
+        run: |
+          for issue in ${{ steps.get-issues.outputs.issues }}; do
+            title=$(echo "$issue" | jq -r .title | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+            body=$(echo "$issue" | jq -r .body)
+            repo_name="${title}-$(date +%F)"
+            repo_description="Repository created for issue $issue"
+            curl -u ${{ secrets.GITHUB_USERNAME }}:${{ secrets.GITHUB_TOKEN }} \
+              -X POST \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/user/repos" \
+              -d "{\"name\":\"${repo_name}\",\"description\":\"${repo_description}\"}"
+          done
