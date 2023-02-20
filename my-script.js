@@ -1,3 +1,5 @@
+const { Octokit } = require("@octokit/rest");
+
 const owner = "firebase"
 const repo = "firebase-android-sdk"
 
