@@ -11,12 +11,12 @@ async function run() {
   // const GITHUB_TOKEN = process.env.GITHUB_TOKEN
   // const octokit = github.getOctokit(GITHUB_TOKEN)
 
-await octokit.request('GET /repos/{owner}/{repo}/issues', {
-  owner: owner,
-  repo: repo
-})
+  const test_data = await octokit.request('GET /repos/{owner}/{repo}/issues', {
+    owner: owner,
+    repo: repo
+  })
 
-  console.log(data);
+  console.log(data.length);
 }
 
 run();
