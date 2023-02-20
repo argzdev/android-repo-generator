@@ -15,22 +15,20 @@ async function run() {
   // })
   // console.log(data.length);
 
-  const today = new Date().toISOString().split('T')[0];
-  const query = `is:issue is:open created:${today}`;
+  const query = `is:issue is:open created:${today} repo:firebase/firebase-android-sdk`;
 
+  // Search for issues using the API
   octokit.search.issuesAndPullRequests({ q: query })
     .then((response) => {
-      console.log(`Found ${response.data.total_count} issues opened today:`);
-      response.data.items.forEach((issue) => {
+      const issues = response.data.items.filter(issue => !issue.pull_request); // Filter out pull requests
+      console.log(`Found ${issues.length} issues opened today in firebase-android-sdk:`);
+      issues.forEach((issue) => {
         console.log(`- ${issue.html_url}`);
       });
     })
     .catch((error) => {
       console.error(`Error retrieving issues: ${error}`);
     });
-    
-
-
 
   // octokit.repos.createForAuthenticatedUser({
   //   name: "test_repo",
