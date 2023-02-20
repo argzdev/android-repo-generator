@@ -24,7 +24,7 @@ async function run() {
 
   // for each issue that were opened for the day, create a repository
   await issues.forEach(async (issue) => {
-    const name = "issue" + issue.number
+    const name = `issue${issue.number}`
     console.log(name)
     
     try {
@@ -36,6 +36,8 @@ async function run() {
           private: true,
         });
         console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
+      } else {
+        console.log(`Repository ${existingRepo.name} already exists`);
       }
     } catch (error) {
       console.error(`Error creating repository ${name}: ${error}`);
