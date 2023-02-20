@@ -13,21 +13,17 @@ async function run() {
   var issues = [];
 
   // get all repositories that were opened for the day
-  octokit.search.issuesAndPullRequests({ q: query })
+  await octokit.search.issuesAndPullRequests({ q: query })
     .then((response) => {
       issues = response.data.items.filter(issue => !issue.pull_request);
       console.log(`Found ${issues.length} issues opened today in firebase-android-sdk:`);
-
-      issues.forEach(async (issue) => {
-        console.log("issue" + issue.number)
-      })
     })
     .catch((error) => {
       console.error(`Error retrieving issues: ${error}`);
     });
 
   // for each issue that were opened for the day, create a repository
-  issues.forEach(async (issue) => {
+  await issues.forEach(async (issue) => {
     const name = "issue" + issue.number
     console.log(name)
     
