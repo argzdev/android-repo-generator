@@ -37,8 +37,7 @@ async function run() {
         });
         console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
       } else {
-        console.log(existingRepo)
-        console.log(`Repository ${existingRepo.name} already exists`);
+        console.log(`Repository ${existingRepo.data.name} already exists`);
       }
     } catch (error) {
       console.error(`Error creating repository ${name}: ${error}`);
