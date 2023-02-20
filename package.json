@@ -1,0 +1,23 @@
+{
+  "name": "android-repo-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "my-script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/argzdev/android-repo-generator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/argzdev/android-repo-generator/issues"
+  },
+  "homepage": "https://github.com/argzdev/android-repo-generator#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1"
+  }
+}
