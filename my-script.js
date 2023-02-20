@@ -9,7 +9,7 @@ const octokit = new Octokit({
 
 async function run() {
   const today = new Date().toISOString().split('T')[0];
-  const query = `is:issue is:open created:${today} repo:firebase/firebase-android-sdk`;
+  const query = `is:issue is:open created:${today} repo:${owner}/${repo}`;
   var issues = [];
 
   // get all repositories that were opened for the day
