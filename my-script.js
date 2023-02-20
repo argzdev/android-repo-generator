@@ -15,6 +15,7 @@ async function run() {
   // })
   // console.log(data.length);
 
+  const today = new Date().toISOString().split('T')[0];
   const query = `is:issue is:open created:${today} repo:firebase/firebase-android-sdk`;
 
   // Search for issues using the API
@@ -29,6 +30,9 @@ async function run() {
     .catch((error) => {
       console.error(`Error retrieving issues: ${error}`);
     });
+
+
+
 
   // octokit.repos.createForAuthenticatedUser({
   //   name: "test_repo",
