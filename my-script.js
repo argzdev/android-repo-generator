@@ -25,7 +25,6 @@ async function run() {
   // for each issue that were opened for the day, create a repository
   await issues.forEach(async (issue) => {
     const name = `issue${issue.number}`
-    console.log(name)
     
     try {
       const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: name }).catch(() => null);
@@ -34,6 +33,9 @@ async function run() {
         const response = await octokit.repos.createForAuthenticatedUser({
           name,
           private: true,
+          auto_init: true,
+          template_owner: 'android',
+          template_repo: 'android-starter',
         });
         console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
       } else {
