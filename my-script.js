@@ -25,7 +25,7 @@ async function run() {
       console.log(`Found ${issues.length} issues opened today in firebase-android-sdk:`);
 
       issues.forEach(issue => {
-        console.log(issue)
+        console.log("issue"+issue.number)
       })
     })
     .catch((error) => {
