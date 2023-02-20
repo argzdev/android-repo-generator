@@ -17,6 +17,10 @@ async function run() {
     .then((response) => {
       issues = response.data.items.filter(issue => !issue.pull_request);
       console.log(`Found ${issues.length} issues opened today in firebase-android-sdk:`);
+
+      issues.forEach(async (issue) => {
+        console.log("issue" + issue.number)
+      })
     })
     .catch((error) => {
       console.error(`Error retrieving issues: ${error}`);
