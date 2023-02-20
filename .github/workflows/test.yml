@@ -24,6 +24,5 @@ jobs:
       - name: Run script
         run: node my-script.js
         env:
-          MY_NAME: ${{ secrets.MY_NAME }}
-          MY_EMAIL: ${{ secrets.MY_EMAIL }}
-          MY_USERNAME: ${{ secrets.MY_USERNAME }}
+          MY_TOKEN: ${{ secrets.MY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
