@@ -16,7 +16,7 @@ async function run() {
     repo: repo
   })
 
-  console.log(data.length);
+  console.log(test_data.length);
 }
 
 run();
