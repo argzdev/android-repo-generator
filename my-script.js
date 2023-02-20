@@ -8,53 +8,38 @@ const octokit = new Octokit({
 })
 
 async function run() {
-  // const { data } = await octokit.request('GET /repos/{owner}/{repo}/issues', {
-  //   owner: owner,
-  //   repo: repo,
-  //   state: "open"
-  // })
-  // console.log(data.length);
-
   const today = new Date().toISOString().split('T')[0];
   const query = `is:issue is:open created:${today} repo:firebase/firebase-android-sdk`;
   var issues = [];
-  // Search for issues using the API
+
+  // get all repositories that were opened for the day
   octokit.search.issuesAndPullRequests({ q: query })
     .then((response) => {
       issues = response.data.items.filter(issue => !issue.pull_request);
       console.log(`Found ${issues.length} issues opened today in firebase-android-sdk:`);
-
-      issues.forEach(issue => {
-        console.log("issue"+issue.number)
-      })
     })
     .catch((error) => {
       console.error(`Error retrieving issues: ${error}`);
     });
 
-    // issues.forEach(async (issue) => {
-    //   const name = issue.name
-    //   try {
-    //     const response = await octokit.repos.createForAuthenticatedUser({
-    //       name,
-    //       private: true,
-    //     });
-    //     console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
-    //   } catch (error) {
-    //     console.error(`Error creating repository ${name}: ${error}`);
-    //   }
-    // });
+  // for each issue that were opened for the day, create a repository
+  issues.forEach(async (issue) => {
+    const name = "issue" + issue.number
 
-  // octokit.repos.createForAuthenticatedUser({
-  //   name: "test_repo",
-  //   description: "this is a test",
-  // })
-  // .then((response) => {
-  //   console.log(`Successfully created new repository: ${response.data.html_url}`);
-  // })
-  // .catch((error) => {
-  //   console.error(`Error creating new repository: ${error}`);
-  // });
+    try {
+      const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: name }).catch(() => null);
+
+      if (!existingRepo) {
+        const response = await octokit.repos.createForAuthenticatedUser({
+          name,
+          private: true,
+        });
+        console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
+      }
+    } catch (error) {
+      console.error(`Error creating repository ${name}: ${error}`);
+    }
+  });
 }
 
 run();

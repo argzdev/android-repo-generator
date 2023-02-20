@@ -25,3 +25,4 @@ jobs:
         run: node my-script.js
         env:
           GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
+          MY_USERNAME: ${{ secrets.MY_USERNAME }}
