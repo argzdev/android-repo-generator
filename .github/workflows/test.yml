@@ -23,5 +23,5 @@ jobs:
       
       - name: Run script
         run: node my-script.js
-        with:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
