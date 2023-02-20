@@ -25,7 +25,8 @@ async function run() {
   // for each issue that were opened for the day, create a repository
   issues.forEach(async (issue) => {
     const name = "issue" + issue.number
-
+    console.log(name)
+    
     try {
       const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: name }).catch(() => null);
 
