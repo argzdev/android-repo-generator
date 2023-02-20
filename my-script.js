@@ -8,15 +8,25 @@ const octokit = new Octokit({
 })
 
 async function run() {
-  // const GITHUB_TOKEN = process.env.GITHUB_TOKEN
-  // const octokit = github.getOctokit(GITHUB_TOKEN)
-
   const { data } = await octokit.request('GET /repos/{owner}/{repo}/issues', {
     owner: owner,
-    repo: repo
+    repo: repo,
+    state: "open"
   })
 
   console.log(data.length);
+
+
+  octokit.repos.createForAuthenticatedUser({
+    name: "test_repo",
+    description: "this is a test",
+  })
+  .then((response) => {
+    console.log(`Successfully created new repository: ${response.data.html_url}`);
+  })
+  .catch((error) => {
+    console.error(`Error creating new repository: ${error}`);
+  });
 }
 
 run();
