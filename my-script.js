@@ -48,7 +48,7 @@ async function createAndroidProject(repositoryName) {
   });
 
   const folderStructure = {
-    "app/src/main/AndroidManifest.xml": "",
+    "app/src/main/AndroidManifest.xml": "test",
     // "app/src/main/java": "",
     // "app/src/main/java/com": "",
     // [`app/src/main/java/${packageName.split(".").join("/")}`]: "",
