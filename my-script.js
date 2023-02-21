@@ -60,7 +60,8 @@ async function createAndroidProject(repositoryName) {
 
   // Add the folder and file structure to the repository
   await Object.keys(folderStructure).forEach(async (path) => {
-    // const content = folderStructure[path];
+    const content = folderStructure[path];
+
     // await octokit.repos.createOrUpdateFileContents({
     //   owner: owner,
     //   repo: repositoryName,
@@ -69,6 +70,7 @@ async function createAndroidProject(repositoryName) {
     //   content: Buffer.from(content).toString("base64"),
     // });
     console.log("path: " + path)
+    console.log("content: " + content)
 
     await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
       owner: 'argzdev',
@@ -79,7 +81,7 @@ async function createAndroidProject(repositoryName) {
         name: 'Argzdev',
         email: 'test@github.com'
       },
-      content: 'bXkgbmV3IGZpbGUgY29udGVudHM='
+      content: Buffer.from(content).toString("base64")
     })
   });
   
