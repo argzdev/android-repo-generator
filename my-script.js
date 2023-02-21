@@ -57,6 +57,7 @@ async function createAndroidProject(repositoryName) {
     // "gradle/build.gradle": "plugins {\n    id 'com.android.application'\n}\n\n"
   };
 
+  
   // Add the folder and file structure to the repository
   await Object.keys(folderStructure).forEach(async (path) => {
     const content = folderStructure[path];
