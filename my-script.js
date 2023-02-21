@@ -24,26 +24,26 @@ async function run() {
 
   // for each issue that were opened for the day, create a repository
   await issues.forEach(async (issue) => {
-    const name = `issue${issue.number}`
+    const repositoryName = `issue${issue.number}`
     
     try {
-      const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: name }).catch(() => null);
+      const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: repositoryName }).catch(() => null);
 
       if (!existingRepo) {
-        const response = await createAndroidProject(name)
+        const response = await createAndroidProject(repositoryName)
         console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
       } else {
         console.log(`Repository ${existingRepo.data.name} already exists`);
       }
     } catch (error) {
-      console.error(`Error creating repository ${name}: ${error}`);
+      console.error(`Error creating repository ${repositoryName}: ${error}`);
     }
   });
 }
 
-async function createAndroidProject(name) {
+async function createAndroidProject(repositoryName) {
   const response = await octokit.repos.createForAuthenticatedUser({
-    name,
+    repositoryName,
     private: true,
   });
 
@@ -62,7 +62,7 @@ async function createAndroidProject(name) {
     const content = folderStructure[path];
     await octokit.repos.createOrUpdateFileContents({
       owner: owner,
-      repo: repoName,
+      repo: repositoryName,
       path,
       message: "create file",
       content: Buffer.from(content).toString("base64"),
