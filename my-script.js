@@ -42,9 +42,9 @@ async function run() {
 }
 
 async function createAndroidProject(repositoryName) {
-  console.log("repository name: " + repositoryName)
+  cinsok
   const response = await octokit.repos.createForAuthenticatedUser({
-    repositoryName,
+    name: repositoryName,
     private: true,
   });
 
@@ -60,16 +60,16 @@ async function createAndroidProject(repositoryName) {
 
 
   // Add the folder and file structure to the repository
-  await Object.keys(folderStructure).forEach(async (path) => {
-    const content = folderStructure[path];
-    await octokit.repos.createOrUpdateFileContents({
-      owner: owner,
-      repo: repositoryName,
-      path,
-      message: "create file",
-      content: Buffer.from(content).toString("base64"),
-    });
-  });
+  // await Object.keys(folderStructure).forEach(async (path) => {
+  //   const content = folderStructure[path];
+  //   await octokit.repos.createOrUpdateFileContents({
+  //     owner: owner,
+  //     repo: repositoryName,
+  //     path,
+  //     message: "create file",
+  //     content: Buffer.from(content).toString("base64"),
+  //   });
+  // });
 
   return response;
 }
