@@ -42,7 +42,6 @@ async function run() {
 }
 
 async function createAndroidProject(repositoryName) {
-  cinsok
   const response = await octokit.repos.createForAuthenticatedUser({
     name: repositoryName,
     private: true,
