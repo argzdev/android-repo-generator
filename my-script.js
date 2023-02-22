@@ -28,7 +28,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     //     name: repositoryName,
     //     auto_init: false
     // });
-    console.log(`Created repository ${repository.full_name}`);
+    // console.log(`Created repository ${repository.full_name}`);
     const { data: { sha: baseTreeSha } } = await octokit.git.getRef({
         repositoryOwner,
         repo: repositoryName,
