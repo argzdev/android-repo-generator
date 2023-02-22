@@ -45,6 +45,7 @@ async function run() {
   });
 }
 
+
 async function createAndroidProject(repositoryName) {
   const packageName = `com.argz.${repositoryName}`
 
