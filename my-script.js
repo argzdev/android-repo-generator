@@ -26,6 +26,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
         name: repositoryName,
         private: true,
     }).then(({ data }) => {
+        console.log("created data: " + data)
         repoName = data.name
     }).catch((error) => {
         console.error(error);
@@ -46,6 +47,6 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
         console.error(error);
     });
 
-    
+
   return response
 }
