@@ -1,15 +1,12 @@
 const { Octokit } = require("@octokit/rest");
 
-const today = new Date().toISOString().split('T')[0];
-var yesterday = new Date()
-yesterday = new Date(yesterday.setDate(yesterday.getDate()-1)).toISOString().split('T')[0];
-
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN
 })
 
 async function run() {
     const repositoryName = "issue_testing_1"
+    const REPOSITORY_OWNER = "argzdev"
 
     try {
         const response = await createAndroidProject(repositoryName, REPOSITORY_OWNER)
