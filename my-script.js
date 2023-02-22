@@ -46,8 +46,7 @@ async function getIssuesFromRepo(query) {
 
 async function repoExists(repositoryName){
     const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: repositoryName }).catch(() => null);
-    if(existingRepo) return true 
-    else return false
+    if(existingRepo) { return true } else { return false }
 }
 
 async function createAndroidProject(repositoryName) {
