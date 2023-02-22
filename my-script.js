@@ -1,7 +1,7 @@
 const { Octokit } = require("@octokit/rest");
 
-const owner = "firebase"
-const repo = "firebase-android-sdk"
+const firebase_owner = "firebase"
+const firebase_repository = "firebase-android-sdk"
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN
@@ -13,7 +13,7 @@ async function run() {
   yesterday = new Date(yesterday.setDate(yesterday.getDate()-1)).toISOString().split('T')[0];
 
   console.log(`yesterday: ${yesterday}`)
-  const query = `is:issue is:open created:${yesterday} repo:${owner}/${repo}`;
+  const query = `is:issue is:open created:${yesterday} repo:${firebase_owner}/${firebase_repository}`;
   var issues = [];
 
   // get all repositories that were opened for the day
@@ -45,14 +45,16 @@ async function run() {
   });
 }
 
+const owner = "argzdev@gmail.com"
+const repositoryOwner = `argz`
 
 async function createAndroidProject(repositoryName) {
-  const packageName = `com.argz.${repositoryName}`
+  const packageName = `com.${repositoryOwner}.${repositoryName}`
 
-  const response = await octokit.repos.createForAuthenticatedUser({
-    name: repositoryName,
-    private: true,
-  });
+  // const response = await octokit.repos.createForAuthenticatedUser({
+  //   name: repositoryName,
+  //   private: true,
+  // });
 
   const folderStructure = {
     "app/src/main/AndroidManifest.xml": "\ntest\ntest\ntest\ntest\ntest",
@@ -61,23 +63,79 @@ async function createAndroidProject(repositoryName) {
     // "gradle/build.gradle": "plugins {\n    id 'com.android.application'\n}\n\n"
   };
 
-
-  // Add the folder and file structure to the repository
-  await Object.keys(folderStructure).forEach(async (path) => {
-    const content = folderStructure[path];
-
-    await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-      owner: 'argzdev',
-      repo: repositoryName,
-      path: path,
-      message: 'my commit message',
-      committer: {
-        name: 'Argzdev',
-        email: 'test@github.com'
+  const tree = await octokit.git.createTree({
+    owner: owner,
+    repo: repositoryName,
+    base_tree: null,
+    tree: [
+      {
+        path: 'app',
+        mode: '040000',
+        type: 'tree'
       },
-      content: Buffer.from(content).toString("base64")
-    })
+      {
+        path: 'gradle',
+        mode: '040000',
+        type: 'tree'
+      },
+      {
+        path: `src/main/java/com/${repositoryOwner}/${repositoryName}`,
+        mode: '040000',
+        type: 'tree'
+      },
+      {
+        path: 'src/main/res',
+        mode: '040000',
+        type: 'tree'
+      },
+      {
+        path: 'build.gradle',
+        mode: '100644',
+        type: 'blob',
+        content: 'BUILD_GRADLE_CONTENTS'
+      },
+      {
+        path: 'settings.gradle',
+        mode: '100644',
+        type: 'blob',
+        content: 'SETTINGS_GRADLE_CONTENTS'
+      }
+    ]
   });
+  
+  const commit = await octokit.git.createCommit({
+    owner: owner,
+    repo: repositoryName,
+    message: 'Initial commit',
+    tree: tree.data.sha,
+    parents: [],
+  });
+
+  await octokit.git.updateRef({
+    owner: owner,
+    repo: repositoryName,
+    ref: 'heads/master',
+    sha: commit.data.sha,
+  });
+
+
+
+  // // Add the folder and file structure to the repository
+  // await Object.keys(folderStructure).forEach(async (path) => {
+  //   const content = folderStructure[path];
+
+  //   await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+  //     owner: 'argzdev',
+  //     repo: repositoryName,
+  //     path: path,
+  //     message: 'my commit message',
+  //     committer: {
+  //       name: 'Argzdev',
+  //       email: 'test@github.com'
+  //     },
+  //     content: Buffer.from(content).toString("base64")
+  //   })
+  // });
 
   return response;
 }
