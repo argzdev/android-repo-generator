@@ -33,6 +33,7 @@ async function run() {
     try {
       const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: repositoryName }).catch(() => null);
 
+      
       if (!existingRepo) {
         const response = await createAndroidProject(repositoryName)
         console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
