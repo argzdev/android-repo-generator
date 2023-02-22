@@ -33,19 +33,33 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
         return octokit.repos.createOrUpdateFileContents({
           owner: owner,
           repo: repo,
-          path: 'hello.txt',
-          message: 'Add hello.txt',
+          path: 'tests.txt',
+          message: 'Add tests.txt',
           content: Buffer.from(content).toString('base64')
         });
       }).then(response => {
         const commitSha = response.data.commit.sha;
         console.log('Commit SHA:', commitSha);
       
-        const tree = [{
-          path: 'hello.txt',
-          mode: '100644',
-          sha: response.data.content.sha
-        }];
+        const tree = [
+            {
+                path: 'hello.txt',
+                mode: '100644',
+                sha: response.data.content.sha
+            },
+            {
+                path: 'app',
+                mode: '040000',
+                type: 'tree',
+                sha: response.data.content.sha
+              },
+              {
+                path: 'gradle',
+                mode: '040000',
+                type: 'tree',
+                sha: response.data.content.sha
+              },
+        ];
       
         // Get the SHA for the HEAD commit of the master branch
         return octokit.git.getRef({
@@ -61,40 +75,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
             owner: owner,
             repo: repo,
             base_tree: baseTreeSha,
-            tree: [
-                {
-                  path: 'app',
-                  mode: '040000',
-                  type: 'tree'
-                },
-                {
-                  path: 'gradle',
-                  mode: '040000',
-                  type: 'tree'
-                },
-                {
-                  path: `src/main/java/com/${repositoryOwner}/${repositoryName}`,
-                  mode: '040000',
-                  type: 'tree'
-                },
-                {
-                  path: 'src/main/res',
-                  mode: '040000',
-                  type: 'tree'
-                },
-                {
-                  path: 'build.gradle',
-                  mode: '100644',
-                  type: 'blob',
-                  content: 'BUILD_GRADLE_CONTENTS'
-                },
-                {
-                  path: 'settings.gradle',
-                  mode: '100644',
-                  type: 'blob',
-                  content: 'SETTINGS_GRADLE_CONTENTS'
-                }
-              ]
+            tree: tree
           });
         });
       }).then(response => {
