@@ -79,10 +79,12 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
 }
 
 async function createRepository(repositoryName){
-    return octokit.repos.createForAuthenticatedUser({
+    octokit.repos.createForAuthenticatedUser({
         name: repositoryName
     }).then(response => {
         const repoUrl = response.data.html_url;
         console.log('Repository URL:', repoUrl);
+        
+        return response
     })
 }
