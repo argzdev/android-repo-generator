@@ -9,6 +9,7 @@ const octokit = new Octokit({
 
 async function run() {
   const today = new Date().toISOString().split('T')[0];
+  today = "2023-02-21"
   console.log(`today: ${today}`)
   const query = `is:issue is:open created:${today} repo:${owner}/${repo}`;
   var issues = [];
