@@ -21,11 +21,11 @@ async function run() {
     await issues.forEach(async (issue) => {
         const repositoryName = `issue${issue.number}`
         
-        console.log("issue9999: " + repoExists("issue9999"))
-        console.log("issue8888: " + repoExists("issue8888"))
-        console.log("issue4707: " + repoExists("issue4707"))
-        
-        if(repoExists(repositoryName)) {
+        console.log("issue9999: " + await repoExists("issue9999"))
+        console.log("issue8888: " + await repoExists("issue8888"))
+        console.log("issue4707: " + await repoExists("issue4707"))
+
+        if(await repoExists(repositoryName)) {
             console.log(`Repository ${repositoryName} already exists`);
             return
         }
