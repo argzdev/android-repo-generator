@@ -10,7 +10,6 @@ async function run() {
 
     try {
         await createAndroidProject(repositoryName, REPOSITORY_OWNER)
-        console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
     } catch (error) {
         console.error(`Error creating repository ${repositoryName}: ${error}`);
     }
