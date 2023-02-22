@@ -47,6 +47,5 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
         console.error(error);
     });
 
-
   return response
 }
