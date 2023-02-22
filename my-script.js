@@ -46,6 +46,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     const repository = await createRepository(repositoryName)
     const repoUrl = repository.data.html_url;
     console.log('Repository URL:', repoUrl);
+    
     // return octokit.repos.createOrUpdateFileContents({
     //       owner: owner,
     //       repo: repo,
