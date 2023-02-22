@@ -11,7 +11,7 @@ async function run() {
   const today = new Date().toISOString().split('T')[0];
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate - 1)
-  yesterday = yesterday.toISOString.split('T')[0];
+  yesterday = yesterday.toISOString().split('T')[0];
 
   console.log(`yesterday: ${yesterday}`)
   const query = `is:issue is:open created:${yesterday} repo:${owner}/${repo}`;
