@@ -52,10 +52,10 @@ const repositoryOwner = `argz`
 async function createAndroidProject(repositoryName) {
   const packageName = `com.${repositoryOwner}.${repositoryName}`
 
-  // const response = await octokit.repos.createForAuthenticatedUser({
-  //   name: repositoryName,
-  //   private: true,
-  // });
+  const response = await octokit.repos.createForAuthenticatedUser({
+    name: repositoryName,
+    private: true,
+  });
 
   const folderStructure = {
     "app/src/main/AndroidManifest.xml": "\ntest\ntest\ntest\ntest\ntest",
