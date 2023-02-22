@@ -15,70 +15,81 @@ async function run() {
     }
 }
 
-run();
 
 async function createAndroidProject(repositoryName, repositoryOwner) {
-    const repository = await createRepository(repositoryName)
-    // const repoUrl = repository.data.html_url;
-    console.log('Repository URL:', repository);
 
-    // return octokit.repos.createOrUpdateFileContents({
-    //       owner: owner,
-    //       repo: repo,
-    //       path: 'tests.txt',
-    //       message: 'Add tests.txt',
-    //       content: Buffer.from(content).toString('base64')
-    //     });
-    //   }).then(response => {
-    //     const commitSha = response.data.commit.sha;
-    //     console.log('Commit SHA:', commitSha);
-      
-    //     const tree = [
-    //         {
-    //             path: 'hello.txt',
-    //             mode: '100644',
-    //             sha: response.data.content.sha
-    //         },
-    //         {
-    //             path: 'app',
-    //             mode: '040000',
-    //             type: 'tree',
-    //             sha: response.data.content.sha
-    //           },
-    //           {
-    //             path: 'gradle',
-    //             mode: '040000',
-    //             type: 'tree',
-    //             sha: response.data.content.sha
-    //           },
-    //     ];
-      
-    //     // Get the SHA for the HEAD commit of the master branch
-    //     return octokit.git.getRef({
-    //       owner: owner,
-    //       repo: repo,
-    //       ref: 'heads/main'
-    //     }).then(response => {
-    //       const baseTreeSha = response.data.object.sha;
-    //       console.log('base Tree SHA:', baseTreeSha);
-      
-    //       // Create a new Git tree with the specified content
-    //       return octokit.git.createTree({
-    //         owner: owner,
-    //         repo: repo,
-    //         base_tree: baseTreeSha,
-    //         tree: tree
-    //       });
-    //     });
-    //   }).then(response => {
-    //     const treeSha = response.data.sha;
-    //     console.log('Tree SHA:', treeSha);
-    //   }).catch(error => {
-    //     console.log('Error:', error);
-    //   });
+    const projectStructure = {
+        'app': {
+        'src': {
+            'main': {
+            'java': {},
+            'res': {}
+            }
+        }
+        }
+    };
+    
+    const { data: repository } = await octokit.repos.createForAuthenticatedUser({
+        name: repositoryName,
+        auto_init: false
+    });
+    console.log(`Created repository ${repository.full_name}`);
+    const { data: { sha: baseTreeSha } } = await octokit.git.getRef({
+        repositoryOwner,
+        repo: repositoryName,
+        ref: 'heads/main'
+    });
+    console.log(`Base tree SHA: ${baseTreeSha}`);
+    const tree = await createGitTree(projectStructure, baseTreeSha);
+    const branchRef = await createBranch(tree.sha);
+    console.log(`Created new branch ${branchRef.data.ref}`);
+    const { data: { html_url } } = await octokit.projects.createForRepo({
+        owner,
+        repo: repoName,
+        name: projectName
+    });
+    console.log(`Created new project ${html_url}`);
 }
 
-async function createRepository(repositoryName){
-    const repository = await octokit.repos.createForAuthenticatedUser({name: repositoryName})
-    return repository
+
+async function createGitTree(files, baseTreeSha) {
+    const gitTree = [];
+    for (let [fileName, contents] of Object.entries(files)) {
+        if (typeof contents === 'object') {
+        const subtree = await createGitTree(contents, baseTreeSha);
+        gitTree.push({
+            path: fileName,
+            mode: '040000',
+            type: 'tree',
+            sha: subtree.sha
+        });
+        } else {
+        if (!fileName.endsWith('.gradle') && !fileName.endsWith('.gradle.kts')) { // exclude gradle plugin files
+            gitTree.push({
+            path: fileName,
+            mode: '100644',
+            type: 'blob',
+            content: contents
+            });
+        }
+        }
+    }
+    const { data: { sha } } = await octokit.git.createTree({
+        owner,
+        repo: repoName,
+        base_tree: baseTreeSha,
+        tree: gitTree
+    });
+    return { sha };
 }
+
+async function createBranch(treeSha) {
+    return await octokit.git.createRef({
+        owner,
+        repo: repoName,
+        ref: 'refs/heads/new-branch',
+        sha: treeSha
+});
+}
+
+run();
