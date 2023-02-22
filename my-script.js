@@ -7,12 +7,7 @@ const octokit = new Octokit({
 async function run() {
     const repositoryName = "issue_testing_1"
     const REPOSITORY_OWNER = "argzdev"
-
-    try {
-        await createAndroidProject(repositoryName, REPOSITORY_OWNER)
-    } catch (error) {
-        console.error(`Error creating repository ${repositoryName}: ${error}`);
-    }
+    await createAndroidProject(repositoryName, REPOSITORY_OWNER)
 }
 
 
@@ -29,10 +24,10 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
         }
     };
     
-    const { data: repository } = await octokit.repos.createForAuthenticatedUser({
-        name: repositoryName,
-        auto_init: false
-    });
+    // const { data: repository } = await octokit.repos.createForAuthenticatedUser({
+    //     name: repositoryName,
+    //     auto_init: false
+    // });
     console.log(`Created repository ${repository.full_name}`);
     const { data: { sha: baseTreeSha } } = await octokit.git.getRef({
         repositoryOwner,
