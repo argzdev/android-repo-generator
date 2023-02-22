@@ -39,15 +39,7 @@ run();
 
 
 async function getIssuesFromRepo(query) {
-    var test = await octokit.search.issuesAndPullRequests({ q: query })
-
-    console.log(test)
-    return test
-        // .then((response) => {
-        //     issues = response.data.items.filter(issue => !issue.pull_request);
-        //     console.log(`Found ${issues.length} issues opened today in ${firebase_repository}`);
-        // })
-        // .catch((error) => {
-        //     console.error(`Error retrieving issues: ${error}`);
-        // });
+    return await octokit.search.issuesAndPullRequests({ q: query })
+        .then((response) => { return response.data.items.filter(issue => !issue.pull_request) })
+        .catch((error) => console.error(`Error retrieving issues: ${error}`));
 }
