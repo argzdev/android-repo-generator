@@ -9,7 +9,7 @@ async function run() {
     const REPOSITORY_OWNER = "argzdev"
 
     try {
-        const response = await createAndroidProject(repositoryName, REPOSITORY_OWNER)
+        await createAndroidProject(repositoryName, REPOSITORY_OWNER)
         console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
     } catch (error) {
         console.error(`Error creating repository ${repositoryName}: ${error}`);
@@ -20,34 +20,43 @@ run();
 
 async function createAndroidProject(repositoryName, repositoryOwner) {
 
-    var repoName = ""
+    const owner = repositoryOwner;
+    const repo = repositoryName;
+    const content = 'Hello, World!';
 
+    // Create a new repository
     octokit.repos.createForAuthenticatedUser({
-        name: repositoryName,
-        private: true,
-    }).then(({ data }) => {
-        console.log("created data: " + data)
-        repoName = data.name
-
-        octokit.git.createTree({
-            owner: repositoryOwner,
-            repo: repoName,
-            tree: [{
-                path: `src/main/java/com/${repositoryOwner}/${repositoryName}`,
-                mode: '040000',
-                type: 'tree'
-            }
-        ]
-        }).then(({ data }) => {
-            console.log('Tree created: ' + data.sha);
-        }).catch((error) => {
-            console.error(error);
-        });
-    }).catch((error) => {
-        console.error(error);
-    });
+        name: repo
+    }).then(response => {
+        const repoUrl = response.data.html_url;
+        console.log('Repository URL:', repoUrl);
     
-
-
-  return response
+        const tree = [{
+            path: 'hello.txt',
+            mode: '100644',
+            content: content
+        }];
+    
+        // Get the SHA for the HEAD commit of the master branch
+        return octokit.git.getRef({
+                owner: owner,
+                repo: repo,
+                ref: 'heads/master'
+            }).then(response => {
+                const baseTreeSha = response.data.object.sha;
+            
+                // Create a new Git tree with the specified content
+                return octokit.git.createTree({
+                    owner: owner,
+                    repo: repo,
+                    base_tree: baseTreeSha,
+                    tree: tree
+                });
+            });
+    }).then(response => {
+        const treeSha = response.data.sha;
+        console.log('Tree SHA:', treeSha);
+    }).catch(error => {
+        console.log('Error:', error);
+    });
 }
