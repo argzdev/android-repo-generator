@@ -61,7 +61,40 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
             owner: owner,
             repo: repo,
             base_tree: baseTreeSha,
-            tree: tree
+            tree: [
+                {
+                  path: 'app',
+                  mode: '040000',
+                  type: 'tree'
+                },
+                {
+                  path: 'gradle',
+                  mode: '040000',
+                  type: 'tree'
+                },
+                {
+                  path: `src/main/java/com/${repositoryOwner}/${repositoryName}`,
+                  mode: '040000',
+                  type: 'tree'
+                },
+                {
+                  path: 'src/main/res',
+                  mode: '040000',
+                  type: 'tree'
+                },
+                {
+                  path: 'build.gradle',
+                  mode: '100644',
+                  type: 'blob',
+                  content: 'BUILD_GRADLE_CONTENTS'
+                },
+                {
+                  path: 'settings.gradle',
+                  mode: '100644',
+                  type: 'blob',
+                  content: 'SETTINGS_GRADLE_CONTENTS'
+                }
+              ]
           });
         });
       }).then(response => {
