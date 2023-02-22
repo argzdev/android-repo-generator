@@ -55,9 +55,7 @@ async function createAndroidProject(repositoryName) {
   });
 
   const folderStructure = {
-    "app/src/main/AndroidManifest.xml": "test",
-    "app/src/main/java": "",
-    "app/src/main/java/com": "",
+    "app/src/main/AndroidManifest.xml": "\ntest\ntest\ntest\ntest\ntest",
     [`app/src/main/java/${packageName.split(".").join("/")}`]: "",
     [`app/src/main/java/${packageName.split(".").join("/")}/MainActivity.java`]: "package " + packageName + ";\n\nimport androidx.appcompat.app.AppCompatActivity;\nimport android.os.Bundle;\n\npublic class MainActivity extends AppCompatActivity {\n    @Override\n    protected void onCreate(Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        setContentView(R.layout.activity_main);\n    }\n}",
     "app/src/main/res/layout/activity_main.xml": '<?xml version="1.0" encoding="utf-8"?>\n<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"\n    xmlns:app="http://schemas.android.com/apk/res-auto"\n    xmlns:tools="http://schemas.android.com/tools"\n    android:layout_width="match_parent"\n    android:layout_height="match_parent"\n    tools:context=".MainActivity">\n\n    <TextView\n        android:layout_width="wrap_content"\n        android:layout_height="wrap_content"\n        android:layout_centerInParent="true"\n        android:text="Hello World!" />\n\n</RelativeLayout>\n',
