@@ -14,25 +14,25 @@ async function run() {
     const query = `is:issue is:open created:${yesterday} repo:${firebase_owner}/${firebase_repository}`;
 
     var issues = await getIssuesFromRepo(query)
-    console.log(`issues: ${issues}`)
 
-  // for each issue that were opened for the day, create a repository
-//   await issues.forEach(async (issue) => {
-//     const repositoryName = `issue${issue.number}`
-    
-//     try {
-//       const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: repositoryName }).catch(() => null);
+    // for each issue that were opened for the day, create a repository
+    await issues.forEach(async (issue) => {
+        const repositoryName = `issue${issue.number}`
+        console.log(`repositoryName: ${repositoryName}`)
+        
+        try {
+            const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: repositoryName }).catch(() => null);
 
-//       if (!existingRepo) {
-//         const response = await createAndroidProject(repositoryName)
-//         console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
-//       } else {
-//         console.log(`Repository ${existingRepo.data.name} already exists`);
-//       }
-//     } catch (error) {
-//       console.error(`Error creating repository ${repositoryName}: ${error}`);
-//     }
-//   });
+            // if (!existingRepo) {
+            //     const response = await createAndroidProject(repositoryName)
+            //     console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
+            // } else {
+            //     console.log(`Repository ${existingRepo.data.name} already exists`);
+            // }
+        } catch (error) {
+            console.error(`Error creating repository ${repositoryName}: ${error}`);
+        }
+    });
 }
 
 run();
