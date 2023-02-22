@@ -8,7 +8,7 @@ async function run() {
     try {
         await createAndroidProject()
     } catch (error) {
-        console.error(`Error creating repository ${repositoryName}: ${error}`);
+        console.error(`Error: ${error}`);
     }
 }
 
