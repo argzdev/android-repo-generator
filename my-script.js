@@ -10,7 +10,7 @@ const octokit = new Octokit({
 async function run() {
   const today = new Date().toISOString().split('T')[0];
   var yesterday = new Date()
-  yesterday = new Date(date.setDate(date.getDate()-1)).toISOString().split('T')[0];
+  yesterday = new Date(yesterday.setDate(yesterday.getDate()-1)).toISOString().split('T')[0];
 
   console.log(`yesterday: ${yesterday}`)
   const query = `is:issue is:open created:${yesterday} repo:${owner}/${repo}`;
