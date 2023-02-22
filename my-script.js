@@ -1,7 +1,5 @@
 const { Octokit } = require("@octokit/rest");
 
-const firebase_owner = "firebase"
-const firebase_repository = "firebase-android-sdk"
 const today = new Date().toISOString().split('T')[0];
 var yesterday = new Date()
 yesterday = new Date(yesterday.setDate(yesterday.getDate()-1)).toISOString().split('T')[0];
@@ -11,24 +9,26 @@ const octokit = new Octokit({
 })
 
 async function run() {
-    const query = `is:issue is:open created:${yesterday} repo:${firebase_owner}/${firebase_repository}`;
+    const FIREBASE_OWNER = "firebase"
+    const FIREBASE_REPOSITORY = "firebase-android-sdk"
+    const QUERY_DATE = yesterday
 
+    // Retrieve all issues that were opened for the day for the said repository
+    const query = `is:issue is:open created:${QUERY_DATE} repo:${FIREBASE_OWNER}/${FIREBASE_REPOSITORY}`;
     var issues = await getIssuesFromRepo(query)
 
-    // for each issue that were opened for the day, create a repository
+    // Create a repository for each issue that were opened
     await issues.forEach(async (issue) => {
         const repositoryName = `issue${issue.number}`
-        console.log(`repositoryName: ${repositoryName}`)
         
-        try {
-            const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: repositoryName }).catch(() => null);
+        if(repoExists(repositoryName)) {
+            console.log(`Repository ${repositoryName} already exists`);
+            return
+        }
 
-            // if (!existingRepo) {
-            //     const response = await createAndroidProject(repositoryName)
-            //     console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
-            // } else {
-            //     console.log(`Repository ${existingRepo.data.name} already exists`);
-            // }
+        try {
+            const response = await createAndroidProject(repositoryName)
+            console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
         } catch (error) {
             console.error(`Error creating repository ${repositoryName}: ${error}`);
         }
@@ -42,4 +42,75 @@ async function getIssuesFromRepo(query) {
     return await octokit.search.issuesAndPullRequests({ q: query })
         .then((response) => { return response.data.items.filter(issue => !issue.pull_request) })
         .catch((error) => console.error(`Error retrieving issues: ${error}`));
+}
+
+async function repoExists(repositoryName){
+    const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: repositoryName }).catch(() => null);
+    if(existingRepo) return true 
+    else return false
+}
+
+async function createAndroidProject(repositoryName) {
+
+  const response = await octokit.repos.createForAuthenticatedUser({
+    name: repositoryName,
+    private: true,
+  });
+
+  const tree = await octokit.git.createTree({
+    owner: owner,
+    repo: repositoryName,
+    base_tree: null,
+    tree: [
+      {
+        path: 'app',
+        mode: '040000',
+        type: 'tree'
+      },
+      {
+        path: 'gradle',
+        mode: '040000',
+        type: 'tree'
+      },
+      {
+        path: `src/main/java/com/${repositoryOwner}/${repositoryName}`,
+        mode: '040000',
+        type: 'tree'
+      },
+      {
+        path: 'src/main/res',
+        mode: '040000',
+        type: 'tree'
+      },
+      {
+        path: 'build.gradle',
+        mode: '100644',
+        type: 'blob',
+        content: 'BUILD_GRADLE_CONTENTS'
+      },
+      {
+        path: 'settings.gradle',
+        mode: '100644',
+        type: 'blob',
+        content: 'SETTINGS_GRADLE_CONTENTS'
+      }
+    ]
+  });
+  
+  const commit = await octokit.git.createCommit({
+    owner: owner,
+    repo: repositoryName,
+    message: 'Initial commit',
+    tree: tree.data.sha,
+    parents: [],
+  });
+
+  await octokit.git.updateRef({
+    owner: owner,
+    repo: repositoryName,
+    ref: 'heads/master',
+    sha: commit.data.sha,
+  });
+
+  return response
 }
