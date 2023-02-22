@@ -21,13 +21,13 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     // console.log(`Created repository ${repository.full_name}`);
 
     // Step 2 create an empty file
-    const { data: file } = octokit.rest.repos.createOrUpdateFileContents({
-        owner: repositoryOwner,
-        repo: repositoryName,
-        path: "README.md",
-        message: "Initial commit",
-        content: "",
-    })
+    // const { data: file } = octokit.rest.repos.createOrUpdateFileContents({
+    //     owner: repositoryOwner,
+    //     repo: repositoryName,
+    //     path: "README.md",
+    //     message: "Initial commit",
+    //     content: "",
+    // })
 
     // Step 3 get commit SHA
     const { data: { sha: baseTreeSha } } = await octokit.git.getRef({
@@ -36,6 +36,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
         ref: 'heads/main'
     });
     console.log(`Base tree SHA: ${baseTreeSha}`);
+
 
     // Step 4 create tree
     // const tree = await createGitTree(projectStructure, baseTreeSha);
