@@ -46,6 +46,8 @@ async function run() {
 }
 
 async function createAndroidProject(repositoryName) {
+  const packageName = `com.argz.${repositoryName}`
+
   const response = await octokit.repos.createForAuthenticatedUser({
     name: repositoryName,
     private: true,
@@ -60,7 +62,6 @@ async function createAndroidProject(repositoryName) {
     "app/src/main/res/layout/activity_main.xml": '<?xml version="1.0" encoding="utf-8"?>\n<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"\n    xmlns:app="http://schemas.android.com/apk/res-auto"\n    xmlns:tools="http://schemas.android.com/tools"\n    android:layout_width="match_parent"\n    android:layout_height="match_parent"\n    tools:context=".MainActivity">\n\n    <TextView\n        android:layout_width="wrap_content"\n        android:layout_height="wrap_content"\n        android:layout_centerInParent="true"\n        android:text="Hello World!" />\n\n</RelativeLayout>\n',
     "gradle/build.gradle": "plugins {\n    id 'com.android.application'\n}\n\n"
   };
-
 
   // Add the folder and file structure to the repository
   await Object.keys(folderStructure).forEach(async (path) => {
