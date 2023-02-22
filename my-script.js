@@ -51,9 +51,10 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
         return octokit.git.getRef({
           owner: owner,
           repo: repo,
-          ref: 'heads/master'
+          ref: 'heads/main'
         }).then(response => {
           const baseTreeSha = response.data.object.sha;
+          console.log('base Tree SHA:', baseTreeSha);
       
           // Create a new Git tree with the specified content
           return octokit.git.createTree({
