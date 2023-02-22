@@ -20,27 +20,32 @@ run();
 
 async function createAndroidProject(repositoryName, repositoryOwner) {
 
-    const response = await octokit.repos.createForAuthenticatedUser({
+    var repoName = ""
+
+    await octokit.repos.createForAuthenticatedUser({
         name: repositoryName,
         private: true,
     }).then(({ data }) => {
-        octokit.git.createTree({
-            owner: repositoryOwner,
-            repo: data.name,
-            tree: [
-              {
-                path: `src/main/java/com/${repositoryOwner}/${repositoryName}`,
-                mode: '040000',
-                type: 'tree'
-              }
-            ]
-          }).then(({ data }) => {
-            console.log('Tree created: ' + data.sha);
-          }).catch((error) => {
-            console.error(error);
-          });
+        repoName = data.name
     }).catch((error) => {
         console.error(error);
     });
+
+    await octokit.git.createTree({
+        owner: repositoryOwner,
+        repo: repoName,
+        tree: [{
+            path: `src/main/java/com/${repositoryOwner}/${repositoryName}`,
+            mode: '040000',
+            type: 'tree'
+        }
+    ]
+    }).then(({ data }) => {
+        console.log('Tree created: ' + data.sha);
+    }).catch((error) => {
+        console.error(error);
+    });
+
+    
   return response
 }
