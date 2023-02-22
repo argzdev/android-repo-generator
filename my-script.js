@@ -38,20 +38,21 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     
         // Get the SHA for the HEAD commit of the master branch
         return octokit.git.getRef({
+            owner: owner,
+            repo: repo,
+            ref: 'heads/master'
+        }).then(response => {
+            const baseTreeSha = response.data.object.sha;
+            console.log("base Tree SHA: ", baseTreeSha);
+        
+            // Create a new Git tree with the specified content
+            return octokit.git.createTree({
                 owner: owner,
                 repo: repo,
-                ref: 'heads/master'
-            }).then(response => {
-                const baseTreeSha = response.data.object.sha;
-            
-                // Create a new Git tree with the specified content
-                return octokit.git.createTree({
-                    owner: owner,
-                    repo: repo,
-                    base_tree: baseTreeSha,
-                    tree: tree
-                });
+                base_tree: baseTreeSha,
+                tree: tree
             });
+        });
     }).then(response => {
         const treeSha = response.data.sha;
         console.log('Tree SHA:', treeSha);
