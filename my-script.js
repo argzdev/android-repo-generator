@@ -12,14 +12,6 @@ async function run() {
 
 
 async function createAndroidProject(repositoryName, repositoryOwner) {
-
-    // Step 0 create dummy repository
-    const { data: repository } = await octokit.repos.get({
-        repositoryOwner,
-        repositoryName,
-    });
-    console.log(`Repository: ${repository.default_branch}`)
-
     // Step 1 create repository
     // const { data: repository } = await octokit.repos.createForAuthenticatedUser({
     //     name: repositoryName,
@@ -40,7 +32,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     const { data: { sha: baseTreeSha } } = await octokit.git.getRef({
         repositoryOwner,
         repo: repositoryName,
-        ref: repository.default_branch
+        ref: 'main'
     });
     console.log(`Base tree SHA: ${baseTreeSha}`);
 
@@ -58,3 +50,21 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
 }
 
 run();
+
+
+/***
+ * 
+ * 
+    const requestURL = 'https://api.github.com/repos/' + repoName + '/issues?sort=created&state=all&page=' + pageNo + '&per_page=100';
+    const apiResults = await fetch(requestURL, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/vnd.github.symmetra-preview+json',
+            'Authorization': 'token ' + accessToken
+        }
+    }).then(resp => {
+        return resp.json();
+    });
+    return apiResults;
+ * 
+ */
