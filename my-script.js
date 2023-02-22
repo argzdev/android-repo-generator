@@ -12,7 +12,6 @@ async function run() {
     }
 }
 
-run();
 
 const projectStructure = {
     'app': {
@@ -100,3 +99,6 @@ async function createGitTree(files) {
       force: true
     });
   }
+
+
+run();
