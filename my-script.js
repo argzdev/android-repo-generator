@@ -9,13 +9,14 @@ const octokit = new Octokit({
 })
 
 async function run() {
-  try {
     const repositoryName = "issue_testing_1"
-    const response = await createAndroidProject(repositoryName, REPOSITORY_OWNER)
-    console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
-  } catch (error) {
-    console.error(`Error creating repository ${repositoryName}: ${error}`);
-  }
+
+    try {
+        const response = await createAndroidProject(repositoryName, REPOSITORY_OWNER)
+        console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
+    } catch (error) {
+        console.error(`Error creating repository ${repositoryName}: ${error}`);
+    }
 }
 
 run();
