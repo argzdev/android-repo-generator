@@ -32,7 +32,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     const { data: { sha: baseTreeSha } } = await octokit.git.getRef({
         repositoryOwner,
         repo: repositoryName,
-        ref: 'main'
+        ref: 'heads/main'
     });
     console.log(`Base tree SHA: ${baseTreeSha}`);
 
