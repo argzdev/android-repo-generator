@@ -57,7 +57,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     private: true,
   });
 
-  
+
   const tree = await octokit.git.createTree({
     owner: repositoryOwner,
     repo: repositoryName,
@@ -113,5 +113,6 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     sha: commit.data.sha,
   });
 
+  
   return response
 }
