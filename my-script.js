@@ -5,12 +5,17 @@ const octokit = new Octokit({
 })
 
 async function run() {
+    const repositoryName = "issue_testing_1"
+    const REPOSITORY_OWNER = "argzdev"
+
     try {
-        await createAndroidProject()
+        await createAndroidProject(repositoryName, REPOSITORY_OWNER)
     } catch (error) {
-        console.error(`Error: ${error}`);
+        console.error(`Error creating repository ${repositoryName}: ${error}`);
     }
 }
+
+run();
 
 
 const projectStructure = {
@@ -35,69 +40,73 @@ const projectStructure = {
       }
     }
 };
-const owner = 'argzdev';
-const repo = 'issue_test_1';
-  
-async function createAndroidProject() {
-    const tree = await createGitTree(projectStructure);
-    const branchRef = await createBranch(tree.sha);
-    console.log(`Created new branch ${branchRef.data.ref}`);
-    await updateBranch(branchRef.data.object.sha);
-}
 
-async function createGitTree(files) {
-    const gitTree = [];
-    for (let [fileName, contents] of Object.entries(files)) {
-      if (typeof contents === 'object') {
-        const subtree = await createGitTree(contents);
-        gitTree.push({
-          path: fileName,
-          mode: '040000',
-          type: 'tree',
-          sha: subtree.sha
+  
+async function createAndroidProject(repositoryName, repositoryOwner) {
+
+    const owner = repositoryOwner;
+    const repo = repositoryName;
+    const content = 'Hello, World!';
+
+    octokit.repos.createForAuthenticatedUser({
+        name: repo
+      }).then(response => {
+        const repoUrl = response.data.html_url;
+        console.log('Repository URL:', repoUrl);
+      
+        // Create a new file in the repository
+        return octokit.repos.createOrUpdateFileContents({
+          owner: owner,
+          repo: repo,
+          path: 'tests.txt',
+          message: 'Add tests.txt',
+          content: Buffer.from(content).toString('base64')
         });
-      } else {
-        if (!fileName.endsWith('.gradle') && !fileName.endsWith('.gradle.kts')) { // exclude gradle plugin files
-          gitTree.push({
-            path: fileName,
-            mode: '100644',
-            type: 'blob',
-            content: contents
+      }).then(response => {
+        const commitSha = response.data.commit.sha;
+        console.log('Commit SHA:', commitSha);
+      
+        const tree = [
+            {
+                path: 'hello.txt',
+                mode: '100644',
+                sha: response.data.content.sha
+            },
+            {
+                path: 'app',
+                mode: '040000',
+                type: 'tree',
+                sha: response.data.content.sha
+              },
+              {
+                path: 'gradle',
+                mode: '040000',
+                type: 'tree',
+                sha: response.data.content.sha
+              },
+        ];
+      
+        // Get the SHA for the HEAD commit of the master branch
+        return octokit.git.getRef({
+          owner: owner,
+          repo: repo,
+          ref: 'heads/main'
+        }).then(response => {
+          const baseTreeSha = response.data.object.sha;
+          console.log('base Tree SHA:', baseTreeSha);
+      
+          // Create a new Git tree with the specified content
+          return octokit.git.createTree({
+            owner: owner,
+            repo: repo,
+            base_tree: baseTreeSha,
+            tree: tree
           });
-        }
-      }
-    }
-    const { data: { sha } } = await octokit.git.createTree({
-      owner,
-      repo,
-      tree: gitTree
-    });
-    return { sha };
-  }
-  
-  async function createBranch(treeSha) {
-    return await octokit.git.createRef({
-      owner,
-      repo,
-      ref: 'refs/heads/new-branch',
-      sha: treeSha
-    });
-  }
-  
-  async function updateBranch(newTreeSha) {
-    const { data: { sha } } = await octokit.git.getRef({
-      owner,
-      repo,
-      ref: 'heads/master'
-    });
-    return await octokit.git.updateRef({
-      owner,
-      repo,
-      ref: 'heads/new-branch',
-      sha,
-      force: true
-    });
-  }
-
-
-run();
+        });
+      }).then(response => {
+        const treeSha = response.data.sha;
+        console.log('Tree SHA:', treeSha);
+      }).catch(error => {
+        console.log('Error:', error);
+      });
+}
