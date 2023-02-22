@@ -12,6 +12,7 @@ async function run() {
     const FIREBASE_OWNER = "firebase"
     const FIREBASE_REPOSITORY = "firebase-android-sdk"
     const QUERY_DATE = yesterday
+    const REPOSITORY_OWNER = "argzdev"
 
     // Retrieve all issues that were opened for the day for the said repository
     const query = `is:issue is:open created:${QUERY_DATE} repo:${FIREBASE_OWNER}/${FIREBASE_REPOSITORY}`;
@@ -21,17 +22,13 @@ async function run() {
     await issues.forEach(async (issue) => {
         const repositoryName = `issue${issue.number}`
         
-        console.log("issue9999: " + await repoExists("issue9999"))
-        console.log("issue8888: " + await repoExists("issue8888"))
-        console.log("issue4707: " + await repoExists("issue4707"))
-
         if(await repoExists(repositoryName)) {
             console.log(`Repository ${repositoryName} already exists`);
             return
         }
 
         try {
-            const response = await createAndroidProject(repositoryName)
+            const response = await createAndroidProject(repositoryName, REPOSITORY_OWNER)
             console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
         } catch (error) {
             console.error(`Error creating repository ${repositoryName}: ${error}`);
@@ -53,7 +50,7 @@ async function repoExists(repositoryName){
     if(existingRepo) { return true } else { return false }
 }
 
-async function createAndroidProject(repositoryName) {
+async function createAndroidProject(repositoryName, repositoryOwner) {
 
   const response = await octokit.repos.createForAuthenticatedUser({
     name: repositoryName,
@@ -61,7 +58,7 @@ async function createAndroidProject(repositoryName) {
   });
 
   const tree = await octokit.git.createTree({
-    owner: owner,
+    owner: repositoryOwner,
     repo: repositoryName,
     base_tree: null,
     tree: [
