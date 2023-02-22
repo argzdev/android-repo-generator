@@ -48,8 +48,7 @@ async function createAndroidProject() {
 async function createGitTree(files) {
     const gitTree = [];
     for (let [fileName, contents] of Object.entries(files)) {
-      const fileStat = fs.statSync(fileName);
-      if (fileStat.isDirectory()) {
+      if (typeof contents === 'object') {
         const subtree = await createGitTree(contents);
         gitTree.push({
           path: fileName,
