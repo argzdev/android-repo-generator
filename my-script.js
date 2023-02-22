@@ -13,6 +13,13 @@ async function run() {
 
 async function createAndroidProject(repositoryName, repositoryOwner) {
 
+    // Step 0 create dummy repository
+    const { data: repository } = await octokit.repos.get({
+        repositoryOwner,
+        repositoryName,
+    });
+    console.log(`Repository: ${repository.default_branch}`)
+
     // Step 1 create repository
     // const { data: repository } = await octokit.repos.createForAuthenticatedUser({
     //     name: repositoryName,
@@ -33,7 +40,7 @@ async function createAndroidProject(repositoryName, repositoryOwner) {
     const { data: { sha: baseTreeSha } } = await octokit.git.getRef({
         repositoryOwner,
         repo: repositoryName,
-        ref: 'heads/main'
+        ref: repository.default_branch
     });
     console.log(`Base tree SHA: ${baseTreeSha}`);
 
