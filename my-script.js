@@ -20,7 +20,7 @@ async function run() {
   await octokit.search.issuesAndPullRequests({ q: query })
     .then((response) => {
       issues = response.data.items.filter(issue => !issue.pull_request);
-      console.log(`Found ${issues.length} issues opened today in ${repo}`);
+      console.log(`Found ${issues.length} issues opened today in ${firebase_repository}`);
     })
     .catch((error) => {
       console.error(`Error retrieving issues: ${error}`);
@@ -33,7 +33,7 @@ async function run() {
     try {
       const existingRepo = await octokit.repos.get({ owner: process.env.MY_USERNAME, repo: repositoryName }).catch(() => null);
 
-      
+
       if (!existingRepo) {
         const response = await createAndroidProject(repositoryName)
         console.log(`Created repository ${response.data.name} with URL ${response.data.html_url}`);
