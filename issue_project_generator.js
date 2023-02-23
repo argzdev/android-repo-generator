@@ -1,8 +1,13 @@
 const { Octokit } = require("@octokit/rest");
 const { createAndroidProject } = require("./android_file_generator");
 
-const REPOSITORY_OWNER = "argzdev" // process.env.MY_USERNAME
-const TOKEN = "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" // process.env.GITHUB_TOKEN
+/***
+ * Pre-requisite
+ * (1) Repository owner name
+ * (2) Github token with repo: permission
+ */
+const REPOSITORY_OWNER = process.env.MY_USERNAME
+const TOKEN = process.env.GITHUB_TOKEN
 
 const today = new Date().toISOString().split('T')[0];
 const FIREBASE_OWNER = "firebase"
