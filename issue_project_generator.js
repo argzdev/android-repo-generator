@@ -7,7 +7,7 @@ const { createAndroidProject } = require("./android_file_generator");
  * (2) Github token with repo: permission
  */
 const REPOSITORY_OWNER = process.env.MY_USERNAME
-const TOKEN = process.env.GITHUB_TOKEN
+const TOKEN = process.env.MY_TOKEN
 
 const today = new Date().toISOString().split('T')[0];
 const FIREBASE_OWNER = "firebase"
