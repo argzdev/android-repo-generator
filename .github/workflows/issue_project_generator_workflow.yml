@@ -22,7 +22,7 @@ jobs:
         run: npm install @octokit/rest
       
       - name: Run script
-        run: node my-script.js
+        run: node issue_project_generator.js
         env:
           GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
           MY_USERNAME: ${{ secrets.MY_USERNAME }}
